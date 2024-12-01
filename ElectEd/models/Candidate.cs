@@ -21,11 +21,9 @@ public class Candidate
 
     [Required]
     public int ElectionId { get; set; } // Foreign Key
-    public Election Election { get; set; }
 
     [Required]
     public int PositionId { get; set; } // Foreign Key
-    public Position Position { get; set; }
 
     public int VoteCount { get; set; } = 0;
 

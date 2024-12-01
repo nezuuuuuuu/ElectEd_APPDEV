@@ -11,6 +11,13 @@ namespace ElectEd.Controllers
     [ApiController]
     public class ElectionsController : ControllerBase
     {
+        public class ElectionDto
+        {
+            public string Title { get; set; }
+            public string Description { get; set; }
+            public DateTime OpenDate { get; set; }
+            public DateTime CloseDate { get; set; }
+        }
         private readonly ApplicationDbContext _context;
 
         public ElectionsController(ApplicationDbContext context)
@@ -43,6 +50,8 @@ namespace ElectEd.Controllers
         [HttpPost]
         public async Task<ActionResult<Election>> PostElection(Election election)
         {
+
+
             // The Id will automatically be generated and incremented by EF Core
             _context.Elections.Add(election);
             await _context.SaveChangesAsync();

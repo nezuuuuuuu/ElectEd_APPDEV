@@ -11,10 +11,8 @@ public class Position
 
     [Required]
     public int ElectionId { get; set; } // Foreign Key
-    public Election Election { get; set; }
 
     [Required]
     public int MaxSelection { get; set; }
 
-    public ICollection<Candidate> Candidates { get; set; } = new List<Candidate>();
 }

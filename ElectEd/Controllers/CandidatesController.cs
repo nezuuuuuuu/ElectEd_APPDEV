@@ -20,8 +20,6 @@ namespace ElectEd.Controllers
         public async Task<ActionResult<IEnumerable<Candidate>>> GetCandidates()
         {
             return await _context.Candidates
-                                 .Include(c => c.Election)
-                                 .Include(c => c.Position)
                                  .ToListAsync();
         }
 
@@ -30,9 +28,7 @@ namespace ElectEd.Controllers
         public async Task<ActionResult<Candidate>> GetCandidate(int id)
         {
             var candidate = await _context.Candidates
-                                          .Include(c => c.Election)
-                                          .Include(c => c.Position)
-                                          .FirstOrDefaultAsync(c => c.Id == id);
+                                       .FirstOrDefaultAsync(c => c.Id == id);
 
             if (candidate == null)
             {

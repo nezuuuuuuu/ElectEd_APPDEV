@@ -16,5 +16,4 @@ public class Student
     [MaxLength(20)]
     public string Department { get; set; }
 
-    public ICollection<VoteSlip> VoteSlips { get; set; } = new List<VoteSlip>();
 }
