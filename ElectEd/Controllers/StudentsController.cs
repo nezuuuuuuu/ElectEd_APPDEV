@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ElectEd.DTO;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,22 +41,30 @@ namespace ElectEd.Controllers
 
         // PUT: api/Students/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent(int id, Student student)
+        public async Task<IActionResult> PutStudent(int id, StudentDto studentDto)
         {
-            if (id != student.Id)
+
+            var existingStudent = await _context.VoteSlips.SingleOrDefaultAsync(x => x.Id == id);
+            if (existingStudent == null)
             {
-                return BadRequest();
+                return NotFound($"Election with id {id} does not exist.");
             }
 
-            _context.Entry(student).State = EntityState.Modified;
+            // Only update properties (no need to update the 'id' field)
+            studentDto.StudentId = studentDto.StudentId;
+            studentDto.Name = studentDto.Name;
+            studentDto.Department = studentDto.Department;
 
+         
+
+            // Save changes to the database
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!StudentExists(id))
+                if (!_context.Students.Any(e => e.Id == id))
                 {
                     return NotFound();
                 }
@@ -65,17 +74,35 @@ namespace ElectEd.Controllers
                 }
             }
 
-            return NoContent();
+            // Return the updated election
+            return Ok(existingStudent);
         }
 
         // POST: api/Students
         [HttpPost]
-        public async Task<ActionResult<Student>> PostStudent(Student student)
+        public async Task<ActionResult<Student>> PostStudent(StudentDto studentDto)
         {
+           
+
+            int id = _context.Students.Max(x => x.Id) + 1;
+            var student = new Student
+            {
+                Id = id,
+                StudentId = studentDto.StudentId,
+                Name = studentDto.Name,
+                Department = studentDto.Department,
+            
+            };
+
+            // The Id will automatically be generated and incremented by EF Core
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetStudent", new { id = student.Id }, student);
+            // Return the newly created election with its URL
+            return CreatedAtAction(nameof(GetStudent), new { id = student.Id }, student);
+
+
+
         }
 
         // DELETE: api/Students/5

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ElectEd.DTO;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,22 +40,30 @@ namespace ElectEd.Controllers
 
         // PUT: api/VoteSlips/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVoteSlip(int id, VoteSlip voteSlip)
+        public async Task<IActionResult> PutVoteSlip(int id, VoteSlipDto voteSlipDto)
         {
-            if (id != voteSlip.Id)
+          
+
+            var existingVoteSlip = await _context.VoteSlips.SingleOrDefaultAsync(x => x.Id == id);
+            if (existingVoteSlip == null)
             {
-                return BadRequest();
+                return NotFound($"Election with id {id} does not exist.");
             }
+      
+            // Only update properties (no need to update the 'id' field)
+            existingVoteSlip.StudentId = voteSlipDto.StudentId;
+            existingVoteSlip.ElectionId = voteSlipDto.ElectionId;
+            existingVoteSlip.CandidateIds = voteSlipDto.CandidateIds;
+       
 
-            _context.Entry(voteSlip).State = EntityState.Modified;
-
+            // Save changes to the database
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VoteSlipExists(id))
+                if (!_context.VoteSlips.Any(e => e.Id == id))
                 {
                     return NotFound();
                 }
@@ -64,17 +73,35 @@ namespace ElectEd.Controllers
                 }
             }
 
-            return NoContent();
+            // Return the updated election
+            return Ok(existingVoteSlip);
         }
 
         // POST: api/VoteSlips
         [HttpPost]
-        public async Task<ActionResult<VoteSlip>> PostVoteSlip(VoteSlip voteSlip)
+        public async Task<ActionResult<VoteSlip>> PostVoteSlip(VoteSlipDto voteSlipDto)
         {
+            int id = _context.VoteSlips.Max(x => x.Id) + 1;
+            var voteSlip  = new VoteSlip
+            {
+                Id = id,
+                StudentId= voteSlipDto.StudentId,
+                ElectionId= voteSlipDto.ElectionId,
+                CandidateIds= voteSlipDto.CandidateIds
+
+
+            };
+
+
+                                     // The Id will automatically be generated and incremented by EF Core
             _context.VoteSlips.Add(voteSlip);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetVoteSlip", new { id = voteSlip.Id }, voteSlip);
+            // Return the newly created election with its URL
+            return CreatedAtAction(nameof(GetVoteSlip), new { id = voteSlip.Id }, voteSlip);
+
+
+
         }
 
         // DELETE: api/VoteSlips/5

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ElectEd.DTO;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -40,32 +41,64 @@ namespace ElectEd.Controllers
 
         // POST: api/Candidates
         [HttpPost]
-        public async Task<ActionResult<Candidate>> PostCandidate(Candidate candidate)
+        public async Task<ActionResult<Candidate>> PostCandidate(CandidateDto candidateDto)
         {
+            int id = _context.Elections.Max(x => x.Id) + 1;
+            var candidate = new Candidate
+            {
+                Id=id,
+                Name = candidateDto.Name,
+                Partylist = candidateDto.Partylist,
+                Year = candidateDto.Year,
+                Course = candidateDto.Course,
+                ImagePath = candidateDto.ImagePath,
+                ElectionId = candidateDto.ElectionId,
+               PositionId = candidateDto.PositionId,
+                VoteCount = candidateDto.VoteCount,
+                Platforms = candidateDto.Platforms,
+               IsWinner = candidateDto.IsWinner
+            };
+
+            // The Id will automatically be generated and incremented by EF Core
             _context.Candidates.Add(candidate);
             await _context.SaveChangesAsync();
 
+            // Return the newly created election with its URL
             return CreatedAtAction(nameof(GetCandidate), new { id = candidate.Id }, candidate);
         }
 
         // PUT: api/Candidates/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCandidate(int id, Candidate candidate)
-        {
-            if (id != candidate.Id)
+        [HttpPut]
+        [Route("api/candidates/{id}")]
+        public async Task<IActionResult> PutCandidate(int id, CandidateDto candidateDto)
+        { // Fetch the existing election entity from the database
+            var existingCandidate = await _context.Candidates.SingleOrDefaultAsync(x => x.Id == id);
+            if (existingCandidate == null)
             {
-                return BadRequest();
+                return NotFound($"Election with id {id} does not exist.");
             }
 
-            _context.Entry(candidate).State = EntityState.Modified;
+            // Only update properties (no need to update the 'id' field)
+            existingCandidate.Name = candidateDto.Name;
+            existingCandidate.Partylist = candidateDto.Partylist; 
+            existingCandidate.Year = candidateDto.Year;
+            existingCandidate.Course = candidateDto.Course;
+            existingCandidate.ImagePath = candidateDto.ImagePath;
+            existingCandidate.ElectionId = candidateDto.ElectionId;
+            existingCandidate.PositionId = candidateDto.PositionId;
+            existingCandidate.VoteCount = candidateDto.VoteCount;
+            existingCandidate.Platforms = candidateDto.Platforms;
+            existingCandidate.IsWinner = candidateDto.IsWinner;
 
+
+            // Save changes to the database
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Candidates.Any(c => c.Id == id))
+                if (!_context.Candidates.Any(e => e.Id == id))
                 {
                     return NotFound();
                 }
@@ -75,7 +108,8 @@ namespace ElectEd.Controllers
                 }
             }
 
-            return NoContent();
+            // Return the updated election
+            return Ok(existingCandidate);
         }
 
         // DELETE: api/Candidates/5

@@ -4,20 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using ElectEd.DTO;
 namespace ElectEd.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class ElectionsController : ControllerBase
     {
-        public class ElectionDto
-        {
-            public string Title { get; set; }
-            public string Description { get; set; }
-            public DateTime OpenDate { get; set; }
-            public DateTime CloseDate { get; set; }
-        }
+        
         private readonly ApplicationDbContext _context;
 
         public ElectionsController(ApplicationDbContext context)
@@ -48,9 +42,19 @@ namespace ElectEd.Controllers
 
         // POST: api/Elections
         [HttpPost]
-        public async Task<ActionResult<Election>> PostElection(Election election)
+        public async Task<ActionResult<Election>> PostElection(ElectionDto electionDto)
         {
-
+            int id = _context.Elections.Max(x => x.Id)+1;
+            var election = new Election
+            {
+                Id = id,
+                Title = electionDto.Title,
+                ImagePath = electionDto.ImagePath,
+                Description = electionDto.Description,
+                Departments = electionDto.Departments ,
+                OpenDate = electionDto.OpenDate,
+                CloseDate = electionDto.CloseDate
+            };
 
             // The Id will automatically be generated and incremented by EF Core
             _context.Elections.Add(election);
@@ -61,16 +65,26 @@ namespace ElectEd.Controllers
         }
 
         // PUT: api/Elections/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutElection(int id, Election election)
+        [HttpPut]
+        [Route("api/elections/{id}")]
+        public async Task<IActionResult> PutElection(int id, ElectionDto electionDto)
         {
-            if (id != election.Id)
+            // Fetch the existing election entity from the database
+            var existingElection = await _context.Elections.SingleOrDefaultAsync(x => x.Id == id);
+            if (existingElection == null)
             {
-                return BadRequest();
+                return NotFound($"Election with id {id} does not exist.");
             }
 
-            _context.Entry(election).State = EntityState.Modified;
+            // Only update properties (no need to update the 'id' field)
+            existingElection.Title = electionDto.Title;
+            existingElection.ImagePath = electionDto.ImagePath;
+            existingElection.Description = electionDto.Description;
+            existingElection.Departments = electionDto.Departments;
+            existingElection.OpenDate = electionDto.OpenDate;
+            existingElection.CloseDate = electionDto.CloseDate;
 
+            // Save changes to the database
             try
             {
                 await _context.SaveChangesAsync();
@@ -87,9 +101,9 @@ namespace ElectEd.Controllers
                 }
             }
 
-            return NoContent();
+            // Return the updated election
+            return Ok(existingElection);
         }
-
         // DELETE: api/Elections/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Election>> DeleteElection(int id)
