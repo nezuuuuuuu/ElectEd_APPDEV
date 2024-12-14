@@ -1,4 +1,5 @@
 ﻿using ElectEd.DTO;
+using ElectEd.Services.Candidate;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,40 +11,43 @@ namespace ElectEd.Controllers
     public class CandidatesController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly ICandidateInfoService _candidateInfoService;
 
-        public CandidatesController(ApplicationDbContext context)
+        public CandidatesController(ApplicationDbContext context, ICandidateInfoService candidateInfoService)
         {
             _context = context;
+            _candidateInfoService = candidateInfoService;
         }
 
         // GET: api/Candidates
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Candidate>>> GetCandidates()
+        public  IActionResult GetCandidates()
         {
-            return await _context.Candidates
-                                 .ToListAsync();
+            var candidates= _candidateInfoService.GetCandidates();
+            if (candidates == null)
+            {
+                return NotFound($"no candidates");
+            }
+            return Ok(candidates);
         }
 
         // GET: api/Candidates/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Candidate>> GetCandidate(int id)
+        public IActionResult GetCandidate(int id)
         {
-            var candidate = await _context.Candidates
-                                       .FirstOrDefaultAsync(c => c.Id == id);
-
-            if (candidate == null)
+            var candidates = _candidateInfoService.GetCandidateById(id);
+            if (candidates == null)
             {
-                return NotFound();
+                return NotFound($"no candidates with id {id}");
             }
-
-            return candidate;
+            return Ok(candidates);
         }
 
         // POST: api/Candidates
         [HttpPost]
         public async Task<ActionResult<Candidate>> PostCandidate(CandidateDto candidateDto)
         {
-            int id = _context.Elections.Max(x => x.Id) + 1;
+            int id = _context.Candidates.Max(x => x.Id) + 1;
             var candidate = new Candidate
             {
                 Id=id,

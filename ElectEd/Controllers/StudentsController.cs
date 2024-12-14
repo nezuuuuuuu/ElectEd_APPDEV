@@ -82,8 +82,6 @@ namespace ElectEd.Controllers
         [HttpPost]
         public async Task<ActionResult<Student>> PostStudent(StudentDto studentDto)
         {
-           
-
             int id = _context.Students.Max(x => x.Id) + 1;
             var student = new Student
             {
@@ -100,8 +98,6 @@ namespace ElectEd.Controllers
 
             // Return the newly created election with its URL
             return CreatedAtAction(nameof(GetStudent), new { id = student.Id }, student);
-
-
 
         }
 

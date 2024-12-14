@@ -1,9 +1,20 @@
 using Microsoft.EntityFrameworkCore;
-using ElectEd; // Add this namespace to use ApplicationDbContext
+using ElectEd;
+using ElectEd.Services.Candidate;
+using ElectEd.Services.Election;
+using ElectEd.Services.Position;
+using ElectEd.Services.VoteSlip;
+using ElectEd.Services.Student; // Add this namespace to use ApplicationDbContext
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddTransient<ICandidateInfoService,CandidateInfoService>();
+builder.Services.AddTransient<IElectionInfoService, ElectionInfoService>();
+builder.Services.AddTransient<IPositionInfoService,PositionInfoService >();
+builder.Services.AddTransient<IVoteSlipInfoService, VoteSlipInfoService>();
+builder.Services.AddTransient<IStudentInfoService,StudentInfoService>();
+
 builder.Services.AddControllers();
 
 // Register the ApplicationDbContext with SQLite

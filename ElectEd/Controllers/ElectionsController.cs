@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ElectEd.DTO;
+using ElectEd.Services.Candidate;
+using ElectEd.Services.Election;
 namespace ElectEd.Controllers
 {
     [Route("api/[controller]")]
@@ -13,31 +15,40 @@ namespace ElectEd.Controllers
     {
         
         private readonly ApplicationDbContext _context;
+        private readonly IElectionInfoService _electionInfoService;
 
-        public ElectionsController(ApplicationDbContext context)
+        public ElectionsController(ApplicationDbContext context, IElectionInfoService electionInfoService )
         {
             _context = context;
+            _electionInfoService = electionInfoService;
         }
 
         // GET: api/Elections
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Election>>> GetElections()
         {
-            return await _context.Elections.ToListAsync();
-        }
-
-        // GET: api/Elections/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Election>> GetElection(int id)
-        {
-            var election = await _context.Elections.FindAsync(id);
+            var election = _electionInfoService.GetElections();
 
             if (election == null)
             {
                 return NotFound();
             }
 
-            return election;
+            return Ok(election);
+        }
+
+        // GET: api/Elections/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Election>> GetElection(int id)
+        {
+            var election = _electionInfoService.GetElectionById(id);
+
+            if (election == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(election);
         }
 
         // POST: api/Elections

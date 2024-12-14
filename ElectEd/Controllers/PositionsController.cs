@@ -1,4 +1,6 @@
 ﻿using ElectEd.DTO;
+using ElectEd.Services.Candidate;
+using ElectEd.Services.Position;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,35 +11,42 @@ namespace ElectEd.Controllers
     public class PositionsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IPositionInfoService _positionInfoService;
 
-        public PositionsController(ApplicationDbContext context)
+   
+        public PositionsController(ApplicationDbContext context, IPositionInfoService positionInfoService)
         {
             _context = context;
+            _positionInfoService = positionInfoService;
+
         }
 
         // GET: api/Positions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Position>>> GetPositions()
         {
-            return await _context.Positions
-                                
-                                 .ToListAsync();
-        }
-
-        // GET: api/Positions/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Position>> GetPosition(int id)
-        {
-            var position = await _context.Positions
-                                        
-                                          .FirstOrDefaultAsync(p => p.Id == id);
+            var position = _positionInfoService.GetPositions();
 
             if (position == null)
             {
                 return NotFound();
             }
 
-            return position;
+            return Ok(position);
+        }
+
+        // GET: api/Positions/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Position>> GetPosition(int id)
+        {
+            var position = _positionInfoService.GetPositionById(id);
+
+            if (position == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(position);
         }
 
         // POST: api/Positions
