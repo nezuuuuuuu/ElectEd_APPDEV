@@ -2,7 +2,7 @@
 using ElectEd.Services.Candidate;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Entity;
+
 
 using Models;
 namespace ElectEd.Controllers
@@ -110,6 +110,8 @@ namespace ElectEd.Controllers
             {
                 return NotFound($"Election with id {id} does not exist.");
             }
+            var election = _context.Elections.Find(candidateDto.ElectionId);
+            var position = _context.Positions.Find(candidateDto.PositionId);
 
             // Only update properties (no need to update the 'id' field)
             existingCandidate.Name = candidateDto.Name;
@@ -122,9 +124,10 @@ namespace ElectEd.Controllers
             existingCandidate.VoteCount = candidateDto.VoteCount;
             existingCandidate.Platforms = candidateDto.Platforms;
             existingCandidate.IsWinner = candidateDto.IsWinner;
+            existingCandidate.Election = election;
+            existingCandidate.Position = position;
 
 
-            // Save changes to the database
             try
             {
                 await _context.SaveChangesAsync();
