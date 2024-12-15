@@ -54,8 +54,9 @@ namespace ElectEd.Controllers
         [HttpPost]
         public async Task<ActionResult<Position>> PostPosition(PositionDto positionDto)
         {
+            int id = _context.Positions.Any() ? _context.Positions.Max(x => x.Id) + 1 : 1;
 
-            int id = _context.Positions.Max(x => x.Id) + 1;
+
             var election = _context.Elections.Find(positionDto.ElectionId);
             if (election==null)
             {

@@ -13,11 +13,13 @@ namespace ElectEd.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ICandidateInfoService _candidateInfoService;
-
+        
         public CandidatesController(ApplicationDbContext context, ICandidateInfoService candidateInfoService)
         {
             _context = context;
+
             _candidateInfoService = candidateInfoService;
+           
         }
 
         // GET: api/Candidates
@@ -48,8 +50,9 @@ namespace ElectEd.Controllers
         [HttpPost]
         public async Task<ActionResult<Candidate>> PostCandidate(CandidateDto candidateDto)
         {
-            int id = _context.Candidates.Max(x => x.Id) + 1;
+          
 
+            int id = _context.Candidates.Any() ? _context.Candidates.Max(x => x.Id) + 1 : 1;
 
 
             var election = _context.Elections.Find(candidateDto.ElectionId);

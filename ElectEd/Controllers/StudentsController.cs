@@ -95,7 +95,11 @@ namespace ElectEd.Controllers
         [HttpPost]
         public async Task<ActionResult<Student>> PostStudent(StudentDto studentDto)
         {
-            int id = _context.Students.Max(x => x.Id) + 1;
+
+
+            int id = _context.Students.Any() ? _context.Students.Max(x => x.Id) + 1 : 1;
+
+       
             var student = new Student
             {
                 Id = id,
