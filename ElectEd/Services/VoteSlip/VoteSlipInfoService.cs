@@ -56,5 +56,23 @@ namespace ElectEd.Services.VoteSlip
 
             return Task.FromResult(voteslips);
         }
+
+        public Task<List<VoteSlipDtoWithId>> GetVoteSlipByStudentAndElectionId(int studentId, int electionId)
+        {
+            var voteslips = _voteslipInfoRepository.GetVoteSlip()
+                .Where(voteslip => voteslip.StudentId == studentId && voteslip.ElectionId == electionId)
+                .Select(voteslip => new VoteSlipDtoWithId
+                {
+                    Id = voteslip.Id,
+                    StudentId = voteslip.StudentId,
+                    ElectionId = voteslip.ElectionId,
+                    CandidateIds = voteslip.CandidateIds,
+                    Election = voteslip.Election
+
+                })
+                .ToList();
+
+            return Task.FromResult(voteslips);
+        }
     }
 }

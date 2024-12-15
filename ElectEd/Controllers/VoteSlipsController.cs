@@ -51,6 +51,20 @@ namespace ElectEd.Controllers
             return Ok(voteSlip);
         }
 
+
+        [HttpGet("student/{studentId}/election/{electionId}")]
+        public async Task<ActionResult<IEnumerable<VoteSlipDtoWithId>>> GetVoteSlipByStudentAndElection(int studentId, int electionId)
+        {
+            var voteSlips = await _voteSlipInfoService.GetVoteSlipByStudentAndElectionId(studentId, electionId);
+
+            if (voteSlips == null || !voteSlips.Any())
+            {
+                return NotFound(new { Message = "No vote slips found for the given student and election." });
+            }
+
+            return Ok(voteSlips);
+        }
+
         // PUT: api/VoteSlips/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVoteSlip(int id, VoteSlipDto voteSlipDto)

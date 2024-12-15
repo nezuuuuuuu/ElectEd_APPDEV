@@ -8,5 +8,6 @@ namespace ElectEd.Services.Position
         Task<List<PositionDtoWithId>> GetPositions();
 
         PositionDtoWithId? GetPositionById(int id);
+        Task<List<PositionDtoWithId>> GetPositionsByElectionId(int electionId);
     }
 }

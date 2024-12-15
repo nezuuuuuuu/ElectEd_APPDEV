@@ -34,6 +34,19 @@ namespace ElectEd.Controllers
             return Ok(candidates);
         }
 
+        [HttpGet("election/{electionId}")]
+        public async Task<IActionResult> GetCandidatesByElection(int electionId)
+        {
+            var candidates = await _candidateInfoService.GetCandidatesByElectionId(electionId);
+            if (candidates == null || !candidates.Any())
+            {
+                return NotFound(new { Message = "No candidates found for this election." });
+            }
+
+            return Ok(candidates);
+        }
+
+
         // GET: api/Candidates/5
         [HttpGet("{id}")]
         public IActionResult GetCandidate(int id)
@@ -89,7 +102,7 @@ namespace ElectEd.Controllers
 
         // PUT: api/Candidates/5
         [HttpPut]
-        [Route("api/candidates/{id}")]
+        [Route("{id}")]
         public async Task<IActionResult> PutCandidate(int id, CandidateDto candidateDto)
         { // Fetch the existing election entity from the database
             var existingCandidate = await _context.Candidates.SingleOrDefaultAsync(x => x.Id == id);
