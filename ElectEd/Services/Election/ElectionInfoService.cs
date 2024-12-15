@@ -1,20 +1,22 @@
 ﻿using ElectEd.DTO;
+using ElectEd.Repositories.Candidate;
+using ElectEd.Repositories.Election;
 using static System.Collections.Specialized.BitVector32;
 
 namespace ElectEd.Services.Election
 {
     public class ElectionInfoService: IElectionInfoService
     {
-        private readonly ApplicationDbContext _context; // Injected DbContext
+        public readonly IElectionInfoRepository _electionInfoRepository; // Injected DbContext
 
-        public ElectionInfoService(ApplicationDbContext context)
+        public ElectionInfoService(IElectionInfoRepository context)
         {
-            _context = context;
+            _electionInfoRepository = context;
         }
 
         ElectionDtoWithId? IElectionInfoService.GetElectionById(int id)
         {
-            var election = _context.Elections
+            var election = _electionInfoRepository.GetElections()
                                      .FirstOrDefault(c => c.Id == id);
 
 
@@ -40,7 +42,7 @@ namespace ElectEd.Services.Election
 
         Task<List<ElectionDtoWithId>> IElectionInfoService.GetElections()
         {
-            var elections = _context.Elections
+            var elections = _electionInfoRepository.GetElections()
                 .Select(election => new ElectionDtoWithId
                 {
                     Id = election.Id,

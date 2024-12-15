@@ -1,4 +1,6 @@
 ﻿using ElectEd.DTO;
+using ElectEd.Repositories.Election;
+using ElectEd.Repositories.Position;
 using ElectEd.Services.Election;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 
@@ -6,16 +8,16 @@ namespace ElectEd.Services.Position
 {
     public class PositionInfoService: IPositionInfoService
     {
-        private readonly ApplicationDbContext _context; // Injected DbContext
+        public readonly IPositionInfoRepository _positionInfoRepository; // Injected DbContext
 
-        public PositionInfoService(ApplicationDbContext context)
+        public PositionInfoService(IPositionInfoRepository context)
         {
-            _context = context;
+            _positionInfoRepository = context;
         }
 
         PositionDtoWithId? IPositionInfoService.GetPositionById(int id)
         {
-            var position = _context.Positions
+            var position = _positionInfoRepository.GetPositions()
                                      .FirstOrDefault(c => c.Id == id);
 
 
@@ -40,7 +42,7 @@ namespace ElectEd.Services.Position
 
         Task<List<PositionDtoWithId>> IPositionInfoService.GetPositions()
         {
-            var positions = _context.Positions
+            var positions = _positionInfoRepository.GetPositions()
                 .Select(position => new PositionDtoWithId
                 {
                     Id = position.Id,

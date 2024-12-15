@@ -2,8 +2,9 @@
 using ElectEd.Services.Candidate;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data.Entity;
 
-
+using Models;
 namespace ElectEd.Controllers
 {
     [Route("api/[controller]")]
@@ -48,6 +49,16 @@ namespace ElectEd.Controllers
         public async Task<ActionResult<Candidate>> PostCandidate(CandidateDto candidateDto)
         {
             int id = _context.Candidates.Max(x => x.Id) + 1;
+
+
+
+            var election = _context.Elections.Find(candidateDto.ElectionId);
+            var position = _context.Positions.Find(candidateDto.PositionId);
+    
+            if(election==null || position ==null)
+            {
+                return NotFound($"Foreign key not found");
+            }
             var candidate = new Candidate
             {
                 Id=id,
@@ -57,6 +68,8 @@ namespace ElectEd.Controllers
                 Course = candidateDto.Course,
                 ImagePath = candidateDto.ImagePath,
                 ElectionId = candidateDto.ElectionId,
+                Election = election,
+                Position = position,
                PositionId = candidateDto.PositionId,
                 VoteCount = candidateDto.VoteCount,
                 Platforms = candidateDto.Platforms,

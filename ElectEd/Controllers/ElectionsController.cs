@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using ElectEd.DTO;
 using ElectEd.Services.Candidate;
 using ElectEd.Services.Election;
+
+using Models;
+
 namespace ElectEd.Controllers
 {
     [Route("api/[controller]")]

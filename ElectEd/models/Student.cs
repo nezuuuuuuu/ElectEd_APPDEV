@@ -1,19 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-public class Student
+namespace Models
 {
-    public int Id { get; set; }
+    public class Student
+    {
 
-    [Required]
-    [MaxLength(10)]
-    public string StudentId { get; set; } // Unique Student ID
+        public int Id { get; set; }
 
-    [Required]
-    [MaxLength(100)]
-    public string Name { get; set; }
+        [Required]
+        [MaxLength(10)]
+        public string StudentId { get; set; } // Unique Student ID
 
-    [Required]
-    [MaxLength(20)]
-    public string Department { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Name { get; set; }
 
+        [Required]
+        [MaxLength(20)]
+        public string Department { get; set; }
+
+    }
 }

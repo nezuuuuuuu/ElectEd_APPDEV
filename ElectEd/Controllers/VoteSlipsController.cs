@@ -1,8 +1,11 @@
 ﻿using ElectEd.DTO;
+using ElectEd.Services.Student;
+using ElectEd.Services.VoteSlip;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using Models;
 
 namespace ElectEd.Controllers
 {
@@ -11,31 +14,41 @@ namespace ElectEd.Controllers
     public class VoteSlipsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IVoteSlipInfoService _voteSlipInfoService;
 
-        public VoteSlipsController(ApplicationDbContext context)
+
+        public VoteSlipsController(ApplicationDbContext context, IVoteSlipInfoService voteSlipInfoService)
         {
             _context = context;
+            _voteSlipInfoService = voteSlipInfoService;
         }
 
         // GET: api/VoteSlips
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VoteSlip>>> GetVoteSlips()
         {
-            return await _context.VoteSlips.ToListAsync();
-        }
-
-        // GET: api/VoteSlips/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<VoteSlip>> GetVoteSlip(int id)
-        {
-            var voteSlip = await _context.VoteSlips.FindAsync(id);
+            var voteSlip = _voteSlipInfoService.GetVoteSlips();
 
             if (voteSlip == null)
             {
                 return NotFound();
             }
 
-            return voteSlip;
+            return Ok(voteSlip);
+        }
+
+        // GET: api/VoteSlips/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<VoteSlip>> GetVoteSlip(int id)
+        {
+            var voteSlip = _voteSlipInfoService.GetVoteSlipById(id);
+
+            if (voteSlip == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(voteSlip);
         }
 
         // PUT: api/VoteSlips/5
@@ -49,12 +62,19 @@ namespace ElectEd.Controllers
             {
                 return NotFound($"Election with id {id} does not exist.");
             }
-      
+
+            var election = _context.Elections.Find(voteSlipDto.ElectionId);
+            if (election == null)
+            {
+                return NotFound($"election with id {voteSlipDto.ElectionId} not found");
+            }
+
             // Only update properties (no need to update the 'id' field)
             existingVoteSlip.StudentId = voteSlipDto.StudentId;
             existingVoteSlip.ElectionId = voteSlipDto.ElectionId;
             existingVoteSlip.CandidateIds = voteSlipDto.CandidateIds;
-       
+            existingVoteSlip.Election = election;
+
 
             // Save changes to the database
             try
@@ -82,12 +102,21 @@ namespace ElectEd.Controllers
         public async Task<ActionResult<VoteSlip>> PostVoteSlip(VoteSlipDto voteSlipDto)
         {
             int id = _context.VoteSlips.Max(x => x.Id) + 1;
+
+
+            var election = _context.Elections.Find(voteSlipDto.ElectionId);
+            if (election == null)
+            {
+                return NotFound($"election with id {voteSlipDto.ElectionId} not found");
+            }
+
             var voteSlip  = new VoteSlip
             {
                 Id = id,
                 StudentId= voteSlipDto.StudentId,
                 ElectionId= voteSlipDto.ElectionId,
-                CandidateIds= voteSlipDto.CandidateIds
+                CandidateIds= voteSlipDto.CandidateIds,
+                Election = election
 
 
             };

@@ -6,14 +6,43 @@ using ElectEd.Services.Position;
 using ElectEd.Services.VoteSlip;
 using ElectEd.Services.Student; // Add this namespace to use ApplicationDbContext
 
+
+using ElectEd.Repositories.Candidate;
+using ElectEd.Repositories.Election;
+using ElectEd.Repositories.Position;
+using ElectEd.Repositories.VoteSlip;
+using ElectEd.Repositories.Student;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddTransient<ICandidateInfoService,CandidateInfoService>();
 builder.Services.AddTransient<IElectionInfoService, ElectionInfoService>();
 builder.Services.AddTransient<IPositionInfoService,PositionInfoService >();
 builder.Services.AddTransient<IVoteSlipInfoService, VoteSlipInfoService>();
 builder.Services.AddTransient<IStudentInfoService,StudentInfoService>();
+builder.Services.AddTransient<ICandidateInfoService, CandidateInfoService>();
+
+
+
+
+
+
+builder.Services.AddScoped<ICandidateInfoRepository, CandidateInfoRepository>();
+builder.Services.AddScoped<IElectionInfoRepository, ElectionInfoRepository>();
+builder.Services.AddScoped<IPositionInfoRepository, PositionInfoRepository>();
+builder.Services.AddScoped<IVoteSlipInfoRepository, VoteSlipInfoRepository>();
+builder.Services.AddScoped<IStudentInfoRepository, StudentInfoRepository>();
+
+
+
+
+
+
+
+
+
+
+
 
 builder.Services.AddControllers();
 

@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Models;
 
 namespace ElectEd.DTO
 {
@@ -6,36 +8,40 @@ namespace ElectEd.DTO
     {
 
 
-        [Required]
         public int Id { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+
         public string Name { get; set; }
-        [Required]
 
+        [MaxLength(100)]
         public string Partylist { get; set; }
-        [Required]
 
-        public string Year { get; set; }
         [Required]
+        [MaxLength(20)]
+        public string Year { get; set; }
 
         public string Course { get; set; }
-        [Required]
 
         public string ImagePath { get; set; }
-        [Required]
 
-        public int ElectionId { get; set; }
-
-        [Required]
-
-        public int PositionId { get; set; }
         [Required]
 
         public int VoteCount { get; set; } = 0;
-        [Required]
 
         public string Platforms { get; set; }
-        [Required]
-
         public bool IsWinner { get; set; } = false;
+
+        public int ElectionId { get; set; } // Foreign Key
+
+        public Election Election { get; set; }
+
+
+        [Required]
+        public int PositionId { get; set; } // Foreign Key
+
+        public Position Position { get; set; }
     }
+
 }

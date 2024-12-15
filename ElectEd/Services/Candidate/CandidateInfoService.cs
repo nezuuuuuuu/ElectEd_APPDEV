@@ -1,4 +1,5 @@
 ﻿using ElectEd.DTO;
+using ElectEd.Repositories.Candidate;
 using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
 
@@ -6,16 +7,15 @@ namespace ElectEd.Services.Candidate
 {
     public class CandidateInfoService : ICandidateInfoService
     {
-        private readonly ApplicationDbContext _context; // Injected DbContext
+        public readonly ICandidateInfoRepository _candidateInfoRepository; // Injected DbContext
 
-        public CandidateInfoService(ApplicationDbContext context)
+        public CandidateInfoService(ICandidateInfoRepository context)
         {
-            _context = context;
+            _candidateInfoRepository = context;
         }
         public CandidateDtoWithId? GetCandidateById(int id)
         {
-            var candidate = _context.Candidates
-                                     .FirstOrDefault(c => c.Id == id);
+            var candidate = _candidateInfoRepository.GetCandidates().FirstOrDefault(c => c.Id == id);
             
 
             if (candidate == null)
@@ -45,8 +45,8 @@ namespace ElectEd.Services.Candidate
 
         public Task<List<CandidateDtoWithId>> GetCandidates()
         {
-            var candidates = _context.Candidates
-                .Select(candidate => new CandidateDtoWithId
+            var candidates = _candidateInfoRepository.GetCandidates()
+               .Select(candidate => new CandidateDtoWithId
                 {
                     Id = candidate.Id,
                     Name = candidate.Name,

@@ -3,6 +3,7 @@ using ElectEd.Services.Candidate;
 using ElectEd.Services.Position;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models;
 
 namespace ElectEd.Controllers
 {
@@ -55,11 +56,17 @@ namespace ElectEd.Controllers
         {
 
             int id = _context.Positions.Max(x => x.Id) + 1;
+            var election = _context.Elections.Find(positionDto.ElectionId);
+            if (election==null)
+            {
+                return NotFound($"election with id {positionDto.ElectionId} not found");
+            }
             var position = new Position
             {    
 
                 Id = id,
                 Title = positionDto.Title,
+                Election= election,
                 ElectionId = positionDto.ElectionId,
                 MaxSelection = positionDto.MaxSelection,
 
@@ -85,11 +92,17 @@ namespace ElectEd.Controllers
                 return NotFound($"Position with id {id} does not exist.");
             }
 
+            var election = _context.Elections.Find(positionDto.ElectionId);
+            if (election == null)
+            {
+                return NotFound($"election with id {positionDto.ElectionId} not found");
+            }
+
             // Only update properties (no need to update the 'id' field)
             existingPosition.Title = positionDto.Title;
             existingPosition.ElectionId = positionDto.ElectionId;
             existingPosition.MaxSelection = positionDto.MaxSelection;
-
+            existingPosition.Election = election;
 
             // Save changes to the database
             try

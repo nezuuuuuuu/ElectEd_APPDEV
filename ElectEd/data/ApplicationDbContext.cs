@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-
+using Models;
 public class ApplicationDbContext : DbContext
 {
     // Add constructor to accept DbContextOptions

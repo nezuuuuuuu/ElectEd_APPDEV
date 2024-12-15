@@ -1,9 +1,12 @@
 ﻿using ElectEd.DTO;
+using ElectEd.Services.Candidate;
+using ElectEd.Services.Student;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Models;
 
 namespace ElectEd.Controllers
 {
@@ -12,31 +15,41 @@ namespace ElectEd.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IStudentInfoService _studentInfoService;
 
-        public StudentsController(ApplicationDbContext context)
+
+        public StudentsController(ApplicationDbContext context, IStudentInfoService studentInfoService)
         {
             _context = context;
+            _studentInfoService = studentInfoService;
         }
 
         // GET: api/Students
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
-            return await _context.Students.ToListAsync();
-        }
-
-        // GET: api/Students/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetStudent(int id)
-        {
-            var student = await _context.Students.FindAsync(id);
+            var student = _studentInfoService.GetStudents();
 
             if (student == null)
             {
                 return NotFound();
             }
 
-            return student;
+            return Ok(student);
+        }
+
+        // GET: api/Students/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Student>> GetStudent(int id)
+        {
+           var student = _studentInfoService.GetStudentById(id);
+
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(student);
         }
 
         // PUT: api/Students/5

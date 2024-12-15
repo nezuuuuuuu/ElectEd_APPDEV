@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Models;
 
 namespace ElectEd.DTO
 {
@@ -12,7 +13,7 @@ namespace ElectEd.DTO
 
         [Required]
         public int ElectionId { get; set; } // Foreign Key
-
+        public Election Election { get; set; }
         [Required]
         public int MaxSelection { get; set; }
     }

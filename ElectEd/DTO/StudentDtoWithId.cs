@@ -3,20 +3,19 @@ using Models;
 
 namespace ElectEd.DTO
 {
-    public class StudentDto
+    public class StudentDtoWithId
     {
-
+        public int Id { get; set; }
 
         [Required]
-
-        public string StudentId { get; set; } // Unique Student ID
+        [MaxLength(10)]
+        public string StudentId { get; set; } 
         [Required]
-
-
+        [MaxLength(100)]
         public string Name { get; set; }
+
         [Required]
-
-
+        [MaxLength(20)]
         public string Department { get; set; }
     }
 }
