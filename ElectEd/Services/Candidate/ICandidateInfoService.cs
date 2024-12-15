@@ -7,5 +7,7 @@ namespace ElectEd.Services.Candidate
         Task<List<CandidateDtoWithId>> GetCandidates();
 
         CandidateDtoWithId? GetCandidateById(int id);
+        Task<List<CandidateDtoWithId>> GetCandidatesByElectionId(int electionId);
+
     }
 }

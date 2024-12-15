@@ -15,10 +15,10 @@ namespace ElectEd.Services.Student
             _studentInfoRepository = context;
         }
 
-        StudentDtoWithId? IStudentInfoService.GetStudentById(int id)
+        StudentDtoWithId? IStudentInfoService.GetStudentById(string id)
         {
             var student = _studentInfoRepository.GetStudents()
-                                     .FirstOrDefault(c => c.Id == id);
+                                     .FirstOrDefault(c => c.StudentId == id);
 
             if (student == null)
             {

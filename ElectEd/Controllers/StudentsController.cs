@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Models;
+using System.Collections.Specialized;
 
 namespace ElectEd.Controllers
 {
@@ -40,7 +41,7 @@ namespace ElectEd.Controllers
 
         // GET: api/Students/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetStudent(int id)
+        public async Task<ActionResult<Student>> GetStudent(string id)
         {
            var student = _studentInfoService.GetStudentById(id);
 
@@ -98,8 +99,9 @@ namespace ElectEd.Controllers
 
 
             int id = _context.Students.Any() ? _context.Students.Max(x => x.Id) + 1 : 1;
+           
 
-       
+
             var student = new Student
             {
                 Id = id,

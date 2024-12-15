@@ -73,6 +73,7 @@ namespace ElectEd.Controllers
 
             };
 
+
             // The Id will automatically be generated and incremented by EF Core
             _context.Positions.Add(position);
             await _context.SaveChangesAsync();
@@ -81,6 +82,19 @@ namespace ElectEd.Controllers
             return CreatedAtAction(nameof(GetPosition), new { id = position.Id }, position);
          
         }
+
+        [HttpGet("election/{electionId}")]
+        public async Task<IActionResult> GetPositiobByElection(int electionId)
+        {
+            var position = await _positionInfoService.GetPositionsByElectionId(electionId);
+            if (position == null || !position.Any())
+            {
+                return NotFound(new { Message = "No position found for this election." });
+            }
+
+            return Ok(position);
+        }
+
 
         // PUT: api/Positions/5
         [HttpPut("{id}")]

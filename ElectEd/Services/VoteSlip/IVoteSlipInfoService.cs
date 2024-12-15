@@ -7,5 +7,8 @@ namespace ElectEd.Services.VoteSlip
         Task<List<VoteSlipDtoWithId>> GetVoteSlips();
 
         VoteSlipDtoWithId? GetVoteSlipById(int id);
+        Task<List<VoteSlipDtoWithId>> GetVoteSlipByStudentAndElectionId(int studentId, int electionId);
+
+
     }
 }

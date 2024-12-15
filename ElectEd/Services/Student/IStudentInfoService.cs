@@ -6,6 +6,6 @@ namespace ElectEd.Services.Student
     {
         Task<List<StudentDtoWithId>> GetStudents();
 
-        StudentDtoWithId? GetStudentById(int id);
+        StudentDtoWithId? GetStudentById(string id);
     }
 }

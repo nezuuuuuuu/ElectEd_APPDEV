@@ -39,6 +39,21 @@ namespace ElectEd.Services.Position
 
             return positionDto;
         }
+        public Task<List<PositionDtoWithId>> GetPositionsByElectionId(int electionId)
+        {
+            var positions = _positionInfoRepository.GetPositions()
+                .Where(position => position.ElectionId == electionId)
+                .Select(position => new PositionDtoWithId
+                {
+                    Id = position.Id,
+                    Title = position.Title,
+                    ElectionId = position.ElectionId,
+                    MaxSelection = position.MaxSelection,
+                })
+                .ToList();
+
+            return Task.FromResult(positions);
+        }
 
         Task<List<PositionDtoWithId>> IPositionInfoService.GetPositions()
         {
