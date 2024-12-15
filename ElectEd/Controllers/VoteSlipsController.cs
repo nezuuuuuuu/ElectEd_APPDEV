@@ -101,9 +101,10 @@ namespace ElectEd.Controllers
         [HttpPost]
         public async Task<ActionResult<VoteSlip>> PostVoteSlip(VoteSlipDto voteSlipDto)
         {
-            int id = _context.VoteSlips.Max(x => x.Id) + 1;
 
+            int id = _context.VoteSlips.Any() ? _context.VoteSlips.Max(x => x.Id) + 1 : 1;
 
+    
             var election = _context.Elections.Find(voteSlipDto.ElectionId);
             if (election == null)
             {

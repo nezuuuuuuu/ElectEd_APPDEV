@@ -58,7 +58,7 @@ namespace ElectEd.Controllers
         [HttpPost]
         public async Task<ActionResult<Election>> PostElection(ElectionDto electionDto)
         {
-            int id = _context.Elections.Max(x => x.Id)+1;
+            int id = _context.Elections.Any() ? _context.Elections.Max(x => x.Id) + 1 : 1;
             var election = new Election
             {
                 Id = id,

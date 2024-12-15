@@ -26,4 +26,6 @@ public class ApplicationDbContext : DbContext
     {
         // Add custom configurations if necessary
     }
+
+
 }
